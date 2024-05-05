@@ -18,7 +18,7 @@ cat << EOF > /home/${user}/.local/share/applications/CCX-BOX_Apps_updater.deskto
 Encoding=UTF-8
 Name=CCX-BOX App updater
 Path=${path}
-Exec=gnome-terminal --title=CCX-BOX_Apps_updater --active --geometry=100x45 -- bash -c 'sudo ${path}/updater.sh ; exit'
+Exec=gnome-terminal --title=CCX-BOX_Apps_updater --active --geometry=80x45 -- bash -c 'sudo ${path}/updater.sh ; exit'
 Terminal=false
 Type=Application
 Icon=${path}/icon/update_box.png
