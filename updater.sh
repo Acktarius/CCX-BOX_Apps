@@ -133,6 +133,7 @@ git commit -m "mylocal"
 git checkout $(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
 git merge local
 	if [[ $2 == "npm" ]]; then npm install; fi
+	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp ./launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
 cd $presentDir
 }
 
@@ -195,6 +196,7 @@ rm -rf $2
 		if [[ -f .env_tmp ]]; then
 		mv .env_tmp ./${2}/.env 
 		fi
+		cp ./conceal-assistant/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/
 		;;
 		"conceal-guardian")
 		if [[ -f config_tmp.json ]]; then
@@ -277,5 +279,6 @@ checkRepo "/opt" "EZ_Privacy" "https://raw.githubusercontent.com/Acktarius/EZ_Pr
 checkRepo "/opt" "conceal-guardian" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
 checkRepo "/opt/conceal-toolbox" "ping_ccx_pool"
 checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver"
+checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
 
 #git diff HEAD^ HEAD --compact-summary
