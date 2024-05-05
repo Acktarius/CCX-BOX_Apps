@@ -9,7 +9,7 @@
 #
 #
 #variables
-user=$(whoami)
+user=$(id -nu 1000)
 path=$(pwd)
 #Functions
 shortcutCreator() {
