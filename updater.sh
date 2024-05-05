@@ -75,14 +75,15 @@ echo -e "#                                                                  #"
 echo -e "#                                                                  #"
 echo -e "####################################################    ${WHITE}.::::."
 echo -e "${GRIS}#                                                   ${WHITE}.:---=--=--::."
-echo -e "#${WHITE} Script will check repository to update:\t    -=:+-.  .-=:=:"
-echo -e "${GRIS}#					\t    ${WHITE}-=:+."
-echo -e "${WHITE}# "${1}/${2}"\t\t\t\t    -=:+."
+echo -e "${GRIS}#${WHITE}  Script will check repository to update:\t    -=:+-.  .-=:=:"
+echo -e "${GRIS}#                                                   ${WHITE}-=:+."
+echo -e "${GRIS}#                                                   ${WHITE}-=:+."
 echo -e "${GRIS}#                                                   ${WHITE}-=:+."
 echo -e "${GRIS}#						    ${WHITE}-=:=."
 echo -e "${GRIS}#                                                   ${WHITE}-+:-:    .::."
 echo -e "${GRIS}#						    ${WHITE}-+==------===-"
-echo -e "${GRIS}####################################################   ${WHITE}:-=-==-:${TURNOFF}\n"
+echo -e "${GRIS}####################################################   ${WHITE}:-=-==-:${TURNOFF}"
+echo -e "${GRIS}# \t${1}/${ORANGE}${2} ${TURNOFF}\n"
 }
 
 #update functions
@@ -91,7 +92,7 @@ read -p "Do you wish to proceed? (Yes|No)" ans
 case $ans in
 	Y|y|yes|YES|Yes)
 	echo "Starting update..."
-	update $1
+	update $1 $2
 	;;
 	N|n|no|NO|No)
 	echo "nothing will be done"
@@ -100,6 +101,22 @@ case $ans in
 	echo "unexpected answer"
 	;;
 esac	
+}
+
+
+update() {
+read -p "Do you want to Merge(save modification) or Clean install(local tracked file will be lost) (Merge|Clean)?" choix
+case $choix in
+	M|m|Merge)
+	merge $1 $2
+	;;
+	C|c|Clean|clean)
+	clean $1 $2
+	;;
+	*)
+	trip
+	;;
+esac
 }
 
 merge(){
@@ -113,9 +130,9 @@ git checkout local
 fi
 git add .
 git commit -m "mylocal"
-git checkout $(git rev-parse --abbrev-ref HEAD)
+git checkout $(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
 git merge local
-npm install
+	if [[ $2 == "npm" ]]; then npm install; fi
 cd $presentDir
 }
 
@@ -123,27 +140,72 @@ clean(){
 cd $1
 set -e
 git fetch
-git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)
-npm install
+git reset --hard origin/$(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
+	if [[ $2 == "npm" ]]; then npm install; fi
 cd $presentDir
 }
 
-update() {
-read -p "Do you want to Merge(save modification) or Clean install(local tracked file will be lost) (Merge|Clean)?" choix
-case $choix in
-	M|m|Merge)
-	merge $1
-	;;
-	C|c|Clean|clean)
-	clean $1
-	;;
-	*)
-	trip
-	;;
-esac
-
+gitInstall(){
+cd $1
+	case $2 in
+		"conceal-assistant")
+		if [[ -f ./${2}/data/miners.json ]]; then
+		cp ./${2}/data/miners.json miners_tmp.json
+		fi
+		if [[ -f ./${2}/data/users.json ]]; then
+		cp ./${2}/data/users.json users_tmp.json
+		fi
+		if [[ -f ./${2}/.env ]]; then
+		cp ./${2}/.env .env_tmp 
+		fi
+		;;
+		"conceal-guardian")
+		if [[ -f ./${2}/config.json ]]; then
+		cp ./${2}/config.json config_tmp.json
+		fi
+		;;
+		*)
+		;;
+	esac
+rm -rf $2
+	case $2 in
+		"conceal-assistant")
+		git clone https://github.com/Acktarius/${2}.git
+		cd $2
+		npm install && cd ..
+		;;
+		"conceal-guardian")
+		git clone https://github.com/ConcealNetwork/conceal-guardian.git
+		cd $2
+		npm install && cd ..
+		;;
+		*)
+		git clone https://github.com/Acktarius/${2}.git
+		chmod +x ./$2/*.sh
+		;;
+	esac
+	case $2 in
+		"conceal-assistant")
+		if [[ -f miners_tmp.json ]]; then
+		mv miners_tmp.json ./${2}/data/miners.json
+		fi
+		if [[ -f users_tmp.json ]]; then
+		mv users_tmp.json ./${2}/data/users.json
+		fi
+		if [[ -f .env_tmp ]]; then
+		mv .env_tmp ./${2}/.env 
+		fi
+		;;
+		"conceal-guardian")
+		if [[ -f config_tmp.json ]]; then
+		mv config_tmp.json ./${2}/config.json 
+		fi
+		;;
+		*)
+		;;
+	esac
+cd $presentDir
 }
-
 
 #for Anyfolder
 #check directory
@@ -168,34 +230,44 @@ case $? in
                 echo "An unexpected error has occurred.";;
 esac
 fi
-#check .git folder 
+#check .git folder 		--------------------------------------------------------------- <<<<< No .Git
 if [[ ! -d $anyDir/.git ]]; then
 echo ".git folder not found, you should consider updating using deb release file"
-else
+sleep 1
+read -p "or do you wish to re-install from git repository (Y|N)" select
+	case $select in
+		Y|y|Yes|YES)
+		gitInstall $1 $2
+		;;
+		*)
+		;;
+	esac
+else 					#--------------------------------------------------------------- <<<<< .Git
 echo -e "and there is a .git folder"
-#check version with package.json
-if [[ -f $anyDir/package.json ]]; then
-anyVinst=$(version $anyDir "package.json")
-anyVgit=$(curl -s ${3} | jq .version | xargs)
-#anyVgit="1.5.0"
-compAnyV=$(echo -e "$anyVinst\n$anyVgit" | sort -V | head -n1)
+#check version with package.json ------------------------------------------------------- <<<<<< package.json
+	if [[ -f $anyDir/package.json ]]; then
+	anyVinst=$(version $anyDir "package.json")
+	anyVgit=$(curl -s ${3} | jq .version | xargs)
+	#anyVgit="1.5.0"
+	compAnyV=$(echo -e "$anyVinst\n$anyVgit" | sort -V | head -n1)
 
-if [[ $compAnyV != $anyVinst ]]; then
-echo "you have version $anyVinst installed, github version is $anyVgit, nothing will be done"
-else
-if [[ $anyVinst == $anyVgit ]]; then
-echo "you 're up to date, nothing will be done"
-else
-echo -e "you have version $anyVinst installed, github version is $anyVgit\nlooks like you're due for an update !"
-proceed $anyDir
-fi
-fi
-#check version with git diff
-else
-cd $anyDir
-git diff HEAD^ HEAD --compact-summary
-
-fi
+		if [[ $compAnyV != $anyVinst ]]; then
+		echo "you have version $anyVinst installed, github version is $anyVgit, nothing will be done"
+		else
+			if [[ $anyVinst == $anyVgit ]]; then
+			echo -e "\n${ORANGE}${2} ${GRIS}is up to date at version ${ORANGE}$anyVinst${GRIS} , nothing will be done"
+			else
+			echo -e "you have version $anyVinst installed, github version is $anyVgit\nlooks like you're due for an update !"
+			proceed $anyDir "npm"
+			fi
+		fi
+	#check version with git diff -------------------------------------------------------- <<<<<<<< ! package.json
+	else
+	cd $anyDir
+	git diff HEAD^ HEAD --compact-summary
+	cd $presentDir
+	proceed $anyDir "no"
+	fi
 fi
 continu
 }
@@ -203,7 +275,7 @@ continu
 checkRepo "/opt" "conceal-assistant" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
 checkRepo "/opt" "EZ_Privacy" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
 checkRepo "/opt" "conceal-guardian" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
-#checkRepo "/opt/conceal-toolbox" "ping_ccx_pool"
-
+checkRepo "/opt/conceal-toolbox" "ping_ccx_pool"
+checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver"
 
 #git diff HEAD^ HEAD --compact-summary
