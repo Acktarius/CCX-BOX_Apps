@@ -70,7 +70,7 @@ presentation (){
 clear
 echo -e "${GRIS}####################################################################"
 echo -e "#                                                                  #"
-echo -e "${GRIS}###   ${WHITE}               UPDATE YOUR CCX-BOX            ${TURNOFF}${GRIS}               #"
+echo -e "#-->   ${WHITE}               UPDATE YOUR CCX-BOX            ${TURNOFF}${GRIS}           <--#"
 echo -e "#                                                                  #"
 echo -e "#                                                                  #"
 echo -e "####################################################    ${WHITE}.::::."
@@ -82,8 +82,8 @@ echo -e "${GRIS}#                                                   ${WHITE}-=:+
 echo -e "${GRIS}#						    ${WHITE}-=:=."
 echo -e "${GRIS}#                                                   ${WHITE}-+:-:    .::."
 echo -e "${GRIS}#						    ${WHITE}-+==------===-"
-echo -e "${GRIS}####################################################   ${WHITE}:-=-==-:${TURNOFF}"
-echo -e "${GRIS}# \t${1}/${ORANGE}${2} ${TURNOFF}\n"
+echo -e "${GRIS}########                                               ${WHITE}:-=-==-:${TURNOFF}"
+echo -e "${GRIS}# \t\t${1}/${ORANGE}${2} ${TURNOFF}\n"
 }
 
 #update functions
