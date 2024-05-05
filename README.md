@@ -6,7 +6,7 @@ make sure updater.sh and shortcut_installer are executable
 
 
 ## Install
-`cd /opt`  
+`cd /opt/Conceal-toolbox`  
 `sudo git clone https://github.com/Acktarius/CCX-BOX_Apps.git`  
 `cd CCX-BOX_Apps`  
 `sudo ./shortcut_installer.sh` 
