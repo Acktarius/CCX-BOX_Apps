@@ -109,7 +109,7 @@ update() {
 read -p "Do you want to Merge(save modification) or Clean install(local tracked file will be lost) (Merge|Clean)?" choix
 case $choix in
 	M|m|Merge)
-	merge $1 $2 $3
+	merge $1 $2 $3 $4
 	;;
 	C|c|Clean|clean)
 	clean $1 $2 $3 $4
@@ -134,6 +134,7 @@ fi
 git add .
 git commit -m "mylocal"
 git checkout "$3"
+git pull "$4" --rebase
 git merge local --no-ff
 	if [[ $2 == "npm" ]]; then npm install; fi
 	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp $1/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
