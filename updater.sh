@@ -72,6 +72,7 @@ echo -e "${GRIS}################################################################
 echo -e "#                                                                  #"
 echo -e "#-->   ${WHITE}               UPDATE YOUR CCX-BOX            ${TURNOFF}${GRIS}           <--#"
 echo -e "#                                                                  #"
+echo -e "#                                                           ${WHITE}v$(cat package.json | jq .version | xargs)${GRIS} #"
 echo -e "#                                                                  #"
 echo -e "####################################################    ${WHITE}.::::."
 echo -e "${GRIS}#                                                   ${WHITE}.:---=--=--::."
@@ -128,6 +129,7 @@ git checkout -b local
 else
 git checkout local
 fi
+git config user.name "CCX-BOX Updater"
 git add .
 git commit -m "mylocal"
 git checkout "$3"
@@ -139,7 +141,7 @@ cd $presentDir
 
 clean(){
 cd $1
-set -e
+#set -e
 git fetch "$4"
 git reset --hard origin/$3
 	if [[ "$2" == "npm" ]]; then npm install; fi
