@@ -143,7 +143,7 @@ clean(){
 cd $1
 #set -e
 git fetch "$4"
-git reset --hard origin/$3
+#git reset --hard origin/$3
 	if [[ "$2" == "npm" ]]; then npm install; fi
 git checkout "$3"
 cd $presentDir
