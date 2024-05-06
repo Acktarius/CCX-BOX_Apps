@@ -36,15 +36,15 @@ esac
 #general Check
 #Check Zenity
 if ! command -v zenity &> /dev/null; then
-echo "zenity not install"
-sleep 1
+echo "zenity not install\nrun following command to install it\nsudo apt-get install zenity"
+sleep 3
 trip
 fi
 
 #check jq installed
 if ! command -v jq &> /dev/null; then
 echo -e "jq not install\nrun following command to install it\nsudo apt-get install jq"
-sleep 1
+sleep 3
 trip
 fi
 
@@ -133,7 +133,7 @@ git commit -m "mylocal"
 git checkout "$3"
 git merge local
 	if [[ $2 == "npm" ]]; then npm install; fi
-	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp ./launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
+	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp $1/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
 cd $presentDir
 }
 
