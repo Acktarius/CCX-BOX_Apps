@@ -282,7 +282,7 @@ checkRepo "/opt" "EZ_Privacy" "main" "https://github.com/Acktarius/EZ_Privacy.gi
 checkRepo "/opt" "conceal-guardian" "master" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
 checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "master" "https://github.com/Acktarius/ping_ccx_pool.git"
 checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "main" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
-checkRepo "/opt" "launchapear" "main" "https://github.com/Acktarius/launchapear.git"
+#checkRepo "/opt" "launchapear" "main" "https://github.com/Acktarius/launchapear.git"
 checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "main" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
 
 #git diff HEAD^ HEAD --compact-summary
