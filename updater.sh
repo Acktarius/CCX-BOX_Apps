@@ -226,10 +226,8 @@ case $? in
          0)
                 echo "\"$anyDir\" selected.";;
          1)
-                echo "No Directory selected."
-                trip
-                ;;
-        -1)
+                echo "No Directory selected.";;
+        *)
                 echo "An unexpected error has occurred.";;
 esac
 fi
