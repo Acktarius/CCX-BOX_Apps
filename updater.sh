@@ -92,7 +92,7 @@ read -p "Do you wish to proceed? (Yes|No)" ans
 case $ans in
 	Y|y|yes|YES|Yes)
 	echo "Starting update..."
-	update $1 $2 $3
+	update $1 $2 $3 $4
 	;;
 	N|n|no|NO|No)
 	echo "nothing will be done"
@@ -111,7 +111,7 @@ case $choix in
 	merge $1 $2 $3
 	;;
 	C|c|Clean|clean)
-	clean $1 $2 $3
+	clean $1 $2 $3 $4
 	;;
 	*)
 	trip
@@ -140,9 +140,9 @@ cd $presentDir
 clean(){
 cd $1
 set -e
-git fetch
-git reset --hard origin/$(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
-	if [[ $2 == "npm" ]]; then npm install; fi
+git fetch "$4"
+git reset --hard origin/$3
+	if [[ "$2" == "npm" ]]; then npm install; fi
 git checkout "$3"
 cd $presentDir
 }
@@ -250,7 +250,7 @@ echo -e "and there is a .git folder"
 #check version with package.json ------------------------------------------------------- <<<<<< package.json
 	if [[ -f $anyDir/package.json ]]; then
 	anyVinst=$(version $anyDir "package.json")
-	anyVgit=$(curl -s ${4} | jq .version | xargs)
+	anyVgit=$(curl -s ${5} | jq .version | xargs)
 	#anyVgit="1.5.0" -------------------------------------------------------------------- <<<<<<<<<<<<<< Testing purpose
 	compAnyV=$(echo -e "$anyVinst\n$anyVgit" | sort -V | head -n1)
 
@@ -261,7 +261,7 @@ echo -e "and there is a .git folder"
 			echo -e "\n${ORANGE}${2} ${GRIS}is up to date at version ${ORANGE}$anyVinst${GRIS} , nothing will be done"
 			else
 			echo -e "you have version $anyVinst installed, github version is $anyVgit\nlooks like you're due for an update !"
-			proceed $anyDir "npm" $3
+			proceed $anyDir "npm" $3 $4
 			fi
 		fi
 	#check version with git diff -------------------------------------------------------- <<<<<<<< ! package.json
@@ -269,7 +269,7 @@ echo -e "and there is a .git folder"
 	cd $anyDir
 	git diff HEAD^ HEAD --compact-summary
 	cd $presentDir
-	proceed $anyDir "no" $3
+	proceed $anyDir "no" $3 $4
 	fi
 fi
 continu
@@ -277,12 +277,12 @@ continu
 
 #MAIN
 
-checkRepo "/opt" "conceal-assistant" "main" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
-checkRepo "/opt" "EZ_Privacy" "main" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
-checkRepo "/opt" "conceal-guardian" "master" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
-checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "master"
-checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "main"
-checkRepo "/opt" "launchapear" "main"
-checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "main" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
+checkRepo "/opt" "conceal-assistant" "main" "https://github.com/Acktarius/conceal-assistant.git" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
+checkRepo "/opt" "EZ_Privacy" "main" "https://github.com/Acktarius/EZ_Privacy.git" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
+checkRepo "/opt" "conceal-guardian" "master" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
+checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "master" "https://github.com/Acktarius/ping_ccx_pool.git"
+checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "main" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
+checkRepo "/opt" "launchapear" "main" "https://github.com/Acktarius/launchapear.git"
+checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "main" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
 
 #git diff HEAD^ HEAD --compact-summary
