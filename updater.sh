@@ -124,12 +124,13 @@ merge(){
 cd $1
 #set -e
 #check if local branch, if not, will create it
+git config user.name "CCX-BOX Updater"
+git config user.email "updater@ccxbox.com"
 if [[ $(git branch --list | grep -c "local") -eq 0 ]]; then
 git checkout -b local
 else
 git checkout local
 fi
-git config user.name "CCX-BOX Updater"
 git add .
 git commit -m "mylocal"
 git checkout "$3"
