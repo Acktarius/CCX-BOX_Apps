@@ -92,7 +92,7 @@ read -p "Do you wish to proceed? (Yes|No)" ans
 case $ans in
 	Y|y|yes|YES|Yes)
 	echo "Starting update..."
-	update $1 $2
+	update $1 $2 $3
 	;;
 	N|n|no|NO|No)
 	echo "nothing will be done"
@@ -108,10 +108,10 @@ update() {
 read -p "Do you want to Merge(save modification) or Clean install(local tracked file will be lost) (Merge|Clean)?" choix
 case $choix in
 	M|m|Merge)
-	merge $1 $2
+	merge $1 $2 $3
 	;;
 	C|c|Clean|clean)
-	clean $1 $2
+	clean $1 $2 $3
 	;;
 	*)
 	trip
@@ -121,7 +121,7 @@ esac
 
 merge(){
 cd $1
-set -e
+#set -e
 #check if local branch, if not, will create it
 if [[ $(git branch --list | grep -c "local") -eq 0 ]]; then
 git checkout -b local
@@ -130,7 +130,7 @@ git checkout local
 fi
 git add .
 git commit -m "mylocal"
-git checkout $(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
+git checkout "$3"
 git merge local
 	if [[ $2 == "npm" ]]; then npm install; fi
 	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp ./launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
@@ -143,7 +143,7 @@ set -e
 git fetch
 git reset --hard origin/$(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
 	if [[ $2 == "npm" ]]; then npm install; fi
-git checkout $(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)	
+git checkout "$3"
 cd $presentDir
 }
 
@@ -250,8 +250,8 @@ echo -e "and there is a .git folder"
 #check version with package.json ------------------------------------------------------- <<<<<< package.json
 	if [[ -f $anyDir/package.json ]]; then
 	anyVinst=$(version $anyDir "package.json")
-	anyVgit=$(curl -s ${3} | jq .version | xargs)
-	#anyVgit="1.5.0"
+	anyVgit=$(curl -s ${4} | jq .version | xargs)
+	#anyVgit="1.5.0" -------------------------------------------------------------------- <<<<<<<<<<<<<< Testing purpose
 	compAnyV=$(echo -e "$anyVinst\n$anyVgit" | sort -V | head -n1)
 
 		if [[ $compAnyV != $anyVinst ]]; then
@@ -261,7 +261,7 @@ echo -e "and there is a .git folder"
 			echo -e "\n${ORANGE}${2} ${GRIS}is up to date at version ${ORANGE}$anyVinst${GRIS} , nothing will be done"
 			else
 			echo -e "you have version $anyVinst installed, github version is $anyVgit\nlooks like you're due for an update !"
-			proceed $anyDir "npm"
+			proceed $anyDir "npm" $3
 			fi
 		fi
 	#check version with git diff -------------------------------------------------------- <<<<<<<< ! package.json
@@ -269,17 +269,20 @@ echo -e "and there is a .git folder"
 	cd $anyDir
 	git diff HEAD^ HEAD --compact-summary
 	cd $presentDir
-	proceed $anyDir "no"
+	proceed $anyDir "no" $3
 	fi
 fi
 continu
 }
 
-checkRepo "/opt" "conceal-assistant" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
-checkRepo "/opt" "EZ_Privacy" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
-checkRepo "/opt" "conceal-guardian" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
-checkRepo "/opt/conceal-toolbox" "ping_ccx_pool"
-checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver"
-checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
+#MAIN
+
+checkRepo "/opt" "conceal-assistant" "main" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
+checkRepo "/opt" "EZ_Privacy" "main" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
+checkRepo "/opt" "conceal-guardian" "master" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
+checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "master"
+checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "main"
+checkRepo "/opt" "launchapear" "main"
+checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "main" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
 
 #git diff HEAD^ HEAD --compact-summary
