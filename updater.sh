@@ -143,6 +143,7 @@ set -e
 git fetch
 git reset --hard origin/$(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)
 	if [[ $2 == "npm" ]]; then npm install; fi
+git checkout $(git remote show origin | grep "HEAD branch" |  xargs | cut -d " " -f 3)	
 cd $presentDir
 }
 
