@@ -14,7 +14,7 @@ in terminal :
 `sudo ./shortcut_installer.sh` 
 
 ## APPs managed :
-* Conceal Assistant (except shortcut)
+* Conceal Assistant
 * Conceal Guardian
 * CCX ping pool
 * EZ_Privacy
