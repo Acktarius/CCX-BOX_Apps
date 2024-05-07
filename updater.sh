@@ -84,7 +84,7 @@ echo -e "${GRIS}#						    ${WHITE}-=:=."
 echo -e "${GRIS}#                                                   ${WHITE}-+:-:    .::."
 echo -e "${GRIS}#						    ${WHITE}-+==------===-"
 echo -e "${GRIS}########                                               ${WHITE}:-=-==-:${TURNOFF}"
-echo -e "${GRIS}# \t\t${1}/${ORANGE}${2} ${TURNOFF}\n"
+echo -e "${GRIS}# \t${1}/${ORANGE}${2} ${TURNOFF}\n"
 }
 
 #update functions
