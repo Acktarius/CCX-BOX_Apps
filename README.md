@@ -11,7 +11,7 @@ in terminal :
 `cd /opt/conceal-toolbox`  
 `sudo git clone https://github.com/Acktarius/CCX-BOX_Apps.git`  
 `cd CCX-BOX_Apps`  
-`sudo ./shortcut_installer.sh` 
+`./shortcut_installer.sh` 
 
 ## APPs managed :
 * Conceal Assistant
