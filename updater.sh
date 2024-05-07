@@ -134,8 +134,8 @@ fi
 git add .
 git commit -m "mylocal"
 git checkout "$3"
-git pull "$4" --rebase
-git merge local --no-ff
+git fetch "$4"
+git merge local --ff
 	if [[ $2 == "npm" ]]; then npm install; fi
 	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp $1/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
 cd $presentDir
