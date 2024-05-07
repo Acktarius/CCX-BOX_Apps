@@ -20,8 +20,8 @@ echo "$(jq .version ${1}/${2} | xargs)"
 
 #continu
 continu(){
-echo -e "\n"
-read -n 1 -p "Press any key to Continue or Quit (anykey|Q)" answer
+echo -e "\n${GRIS}Press any key to Continue or Quit (anykey|Q)${TURNOFF}"
+read -n 1 answer
 case $answer in
 	Q|q)
 	trip
@@ -89,7 +89,8 @@ echo -e "${GRIS}# \t${1}/${ORANGE}${2} ${TURNOFF}\n"
 
 #update functions
 proceed() {
-read -p "Do you wish to proceed? (Yes|No)" ans
+echo -e "${WHITE}Do you wish to proceed? (Yes|No)${TURNOFF}"	
+read ans
 case $ans in
 	Y|y|yes|YES|Yes)
 	echo "Starting update..."
