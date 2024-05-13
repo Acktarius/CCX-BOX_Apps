@@ -120,38 +120,7 @@ case $choix in
 	;;
 esac
 }
-: '
-merge(){
-cd $1
-#set -e
-#check if local branch, if not, will create it
-git config user.name "CCX-BOX Updater"
-git config user.email "updater@ccxbox.com"
-if [[ $(git branch --list | grep -c "local") -eq 0 ]]; then
-git checkout -b local
-else
-git checkout local
-fi
-git add .
-git commit -m "mylocal"
-git checkout "$3"
-git fetch "$4"
-git merge local --ff
-	if [[ $2 == "npm" ]]; then npm install; fi
-	if [[ "${1##*/}" == "conceal-assistant" ]]; then cp $1/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/; fi
-cd $presentDir
-}
 
-clean(){
-cd $1
-#set -e
-git fetch "$4"
-git reset --hard origin/$3
-	if [[ "$2" == "npm" ]]; then npm install; fi
-git checkout "$3"
-cd $presentDir
-}
-'
 gitInstall(){
 cd $1
 	case $5 in
@@ -306,5 +275,4 @@ checkRepo "/opt" "conceal-guardian" "mpm" "https://github.com/ConcealNetwork/con
 checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "no" "https://github.com/Acktarius/ping_ccx_pool.git"
 checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "no" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
 checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "no" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
-
 
