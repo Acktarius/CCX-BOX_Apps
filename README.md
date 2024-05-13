@@ -4,6 +4,12 @@ Apps updater for CCX-BOX users
 once downloaded make sure updater.sh and shortcut_installer are executable
 `sudo chmod +x updater.sh shortcut_installer.sh`
 
+## Dependencies
+`sudo apt-get update`  
+* Zenity, in case you need to to select a different folder
+`sudo apt-get install zenity`  
+* jq, to get json info
+`sudo apt-get install jq`
 
 ## Install
 in terminal :  

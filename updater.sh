@@ -44,7 +44,7 @@ fi
 #check jq installed
 if ! command -v jq &> /dev/null; then
 echo -e "jq not install\nrun following command to install it\nsudo apt-get install jq"
-sleep 3
+sleep 4
 trip
 fi
 
@@ -107,20 +107,20 @@ esac
 
 
 update() {
-read -p "Do you want to Merge(save modification) or Clean install(local tracked file will be lost) (Merge|Clean)?" choix
+read -p "Do you want to Merge(save modification) or Clean install(you'll lose your config) (Merge|Clean)?" choix
 case $choix in
 	M|m|Merge)
-	merge $1 $2 $3 $4
+	gitInstall $1 $2 $3 $4 "m"
 	;;
 	C|c|Clean|clean)
-	clean $1 $2 $3 $4
+	gitInstall $1 $2 $3 $4 "c"
 	;;
 	*)
 	trip
 	;;
 esac
 }
-
+: '
 merge(){
 cd $1
 #set -e
@@ -151,66 +151,86 @@ git reset --hard origin/$3
 git checkout "$3"
 cd $presentDir
 }
-
+'
 gitInstall(){
 cd $1
-	case $2 in
-		"conceal-assistant")
-		if [[ -f ./${2}/data/miners.json ]]; then
-		cp ./${2}/data/miners.json miners_tmp.json
-		fi
-		if [[ -f ./${2}/data/users.json ]]; then
-		cp ./${2}/data/users.json users_tmp.json
-		fi
-		if [[ -f ./${2}/.env ]]; then
-		cp ./${2}/.env .env_tmp 
-		fi
-		;;
-		"conceal-guardian")
-		if [[ -f ./${2}/config.json ]]; then
-		cp ./${2}/config.json config_tmp.json
-		fi
-		;;
-		*)
-		;;
-	esac
-rm -rf $2
-	case $2 in
-		"conceal-assistant")
-		git clone https://github.com/Acktarius/${2}.git
+	case $5 in
+		"m")
+		case $2 in
+			"conceal-assistant")
+			if [[ -f ./${2}/data/miners.json ]]; then
+			cp ./${2}/data/miners.json miners_tmp.json
+			fi
+			if [[ -f ./${2}/data/users.json ]]; then
+			cp ./${2}/data/users.json users_tmp.json
+			fi
+			if [[ -f ./${2}/.env ]]; then
+			cp ./${2}/.env .env_tmp 
+			fi
+			if [[ -f ./${2}/data/log.txt ]]; then
+			echo -e "$(date +'%Y%m%d')\t$(date +'%T')\tupdate conceal assistant"  >> /${2}/data/log.txt
+			cp ./${2}/data/log.txt log_tmp.txt 
+			fi
+			;;
+			"conceal-guardian")
+			if [[ -f ./${2}/config.json ]]; then
+			cp ./${2}/config.json config_tmp.json
+			fi
+			;;
+			*)
+			;;
+		esac
+		rm -rf $2
+		git clone $4
+		case $3 in
+			"npm")
+			cd $2
+			npm install 
+			cd ..
+			;;
+			"no")
+			chmod +x ./$2/*.sh
+			;;
+			*)
+			;;
+		esac
+		case $2 in
+			"conceal-assistant")
+			if [[ -f miners_tmp.json ]]; then
+			mv miners_tmp.json ./${2}/data/miners.json
+			fi
+			if [[ -f users_tmp.json ]]; then
+			mv users_tmp.json ./${2}/data/users.json
+			fi
+			if [[ -f .env_tmp ]]; then
+			mv .env_tmp ./${2}/.env 
+			fi
+			if [[ -f log_tmp.txt ]]; then
+			mv log_tmp.txt ./${2}/data/log.txt 
+			fi
+			cp ./conceal-assistant/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/
+			;;
+			"conceal-guardian")
+			if [[ -f config_tmp.json ]]; then
+			mv config_tmp.json ./${2}/config.json 
+			fi
+			;;
+			*)
+			;;
+		esac
+	;;
+	"c")
+		rm -rf $2
+		git clone $4
+		if [[ "$3" == "npm" ]]; then 
 		cd $2
-		npm install && cd ..
-		;;
-		"conceal-guardian")
-		git clone https://github.com/ConcealNetwork/conceal-guardian.git
-		cd $2
-		npm install && cd ..
-		;;
-		*)
-		git clone https://github.com/Acktarius/${2}.git
-		chmod +x ./$2/*.sh
-		;;
-	esac
-	case $2 in
-		"conceal-assistant")
-		if [[ -f miners_tmp.json ]]; then
-		mv miners_tmp.json ./${2}/data/miners.json
+		npm install
+		cd ..
 		fi
-		if [[ -f users_tmp.json ]]; then
-		mv users_tmp.json ./${2}/data/users.json
-		fi
-		if [[ -f .env_tmp ]]; then
-		mv .env_tmp ./${2}/.env 
-		fi
-		cp ./conceal-assistant/launcher/ccx-assistant_firefox.sh /opt/conceal-toolbox/
-		;;
-		"conceal-guardian")
-		if [[ -f config_tmp.json ]]; then
-		mv config_tmp.json ./${2}/config.json 
-		fi
-		;;
-		*)
-		;;
+	;;
+	*)
+	trip
+	;;
 	esac
 cd $presentDir
 }
@@ -243,7 +263,7 @@ sleep 1
 read -p "or do you wish to re-install from git repository (Y|N)" select
 	case $select in
 		Y|y|Yes|YES)
-		gitInstall $1 $2
+		proceed $1 $2 $3 $4
 		;;
 		*)
 		;;
@@ -264,7 +284,7 @@ echo -e "and there is a .git folder"
 			echo -e "\n${ORANGE}${2} ${GRIS}is up to date at version ${ORANGE}$anyVinst${GRIS} , nothing will be done"
 			else
 			echo -e "you have version $anyVinst installed, github version is $anyVgit\nlooks like you're due for an update !"
-			proceed $anyDir "npm" $3 $4
+			proceed $1 $2 $3 $4
 			fi
 		fi
 	#check version with git diff -------------------------------------------------------- <<<<<<<< ! package.json
@@ -272,7 +292,7 @@ echo -e "and there is a .git folder"
 	cd $anyDir
 	git diff HEAD^ HEAD --compact-summary
 	cd $presentDir
-	proceed $anyDir "no" $3 $4
+	proceed $1 $2 $3 $4
 	fi
 fi
 continu
@@ -280,12 +300,11 @@ continu
 
 #MAIN
 
-checkRepo "/opt" "conceal-assistant" "main" "https://github.com/Acktarius/conceal-assistant.git" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
-checkRepo "/opt" "EZ_Privacy" "main" "https://github.com/Acktarius/EZ_Privacy.git" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
-checkRepo "/opt" "conceal-guardian" "master" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
-checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "master" "https://github.com/Acktarius/ping_ccx_pool.git"
-checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "main" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
-#checkRepo "/opt" "launchapear" "main" "https://github.com/Acktarius/launchapear.git"
-checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "main" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
+checkRepo "/opt" "conceal-assistant" "npm" "https://github.com/Acktarius/conceal-assistant.git" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
+checkRepo "/opt" "EZ_Privacy" "no" "https://github.com/Acktarius/EZ_Privacy.git" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
+checkRepo "/opt" "conceal-guardian" "mpm" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
+checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "no" "https://github.com/Acktarius/ping_ccx_pool.git"
+checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "no" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
+checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "no" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
 
-#git diff HEAD^ HEAD --compact-summary
+
