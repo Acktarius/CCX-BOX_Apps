@@ -5,6 +5,7 @@ once downloaded make sure updater.sh and shortcut_installer are executable
 `sudo chmod +x updater.sh shortcut_installer.sh`
 
 ## Dependencies
+make sure you appropriate version of **nodejs** (version 20 is required for guardian)  
 `sudo apt-get update`  
 * Zenity, in case you need to to select a different folder
 `sudo apt-get install zenity`  
