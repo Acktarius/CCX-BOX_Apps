@@ -271,7 +271,7 @@ continu
 
 checkRepo "/opt" "conceal-assistant" "npm" "https://github.com/Acktarius/conceal-assistant.git" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
 checkRepo "/opt" "EZ_Privacy" "no" "https://github.com/Acktarius/EZ_Privacy.git" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
-checkRepo "/opt" "conceal-guardian" "mpm" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
+checkRepo "/opt" "conceal-guardian" "npm" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
 checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "no" "https://github.com/Acktarius/ping_ccx_pool.git"
 checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "no" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
 checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "no" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
