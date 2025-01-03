@@ -11,7 +11,7 @@ kill -INT $$
 }
 
 #present Directory
-presentDir=$(pwd)
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 #version
 version() {
@@ -65,6 +65,16 @@ case "$TERM" in
         TURNOFF=''
         ;;
 esac
+
+readonly REPOS_CONFIG="${SCRIPT_DIR}/repos.conf"
+
+validate_config() {
+    if [[ ! -f "${REPOS_CONFIG}" ]]; then
+        echo "Error: Configuration file ${REPOS_CONFIG} not found"
+        trip
+    fi
+}
+
 #Presentation
 presentation (){
 clear
@@ -201,7 +211,7 @@ cd $1
 	trip
 	;;
 	esac
-cd $presentDir
+cd ${SCRIPT_DIR}
 }
 
 #for Anyfolder
@@ -260,7 +270,7 @@ echo -e "and there is a .git folder"
 	else
 	cd $anyDir
 	git diff HEAD^ HEAD --compact-summary
-	cd $presentDir
+	cd ${SCRIPT_DIR}
 	proceed $1 $2 $3 $4
 	fi
 fi
@@ -268,11 +278,20 @@ continu
 }
 
 #MAIN
+validate_config
 
-checkRepo "/opt" "conceal-assistant" "npm" "https://github.com/Acktarius/conceal-assistant.git" "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
-checkRepo "/opt" "EZ_Privacy" "no" "https://github.com/Acktarius/EZ_Privacy.git" "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
-checkRepo "/opt" "conceal-guardian" "npm" "https://github.com/ConcealNetwork/conceal-guardian.git" "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
-checkRepo "/opt/conceal-toolbox" "ping_ccx_pool" "no" "https://github.com/Acktarius/ping_ccx_pool.git"
-checkRepo "/opt/conceal-toolbox" "mem-alloc-fail_solver" "no" "https://github.com/Acktarius/mem-alloc-fail_solver.git"
-checkRepo "/opt/conceal-toolbox" "CCX-BOX_Apps" "no" "https://github.com/Acktarius/CCX-BOX_Apps.git" "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
+while IFS='|' read -r base_path sub_folder npm_option git_url package_url || [[ -n "$base_path" ]]; do
+    # Skip empty lines and comments
+    [[ -z "$base_path" || "$base_path" =~ ^[[:space:]]*# ]] && continue
+    
+    # Trim whitespace
+    base_path=$(echo "$base_path" | xargs)
+    sub_folder=$(echo "$sub_folder" | xargs)
+    npm_option=$(echo "$npm_option" | xargs)
+    git_url=$(echo "$git_url" | xargs)
+    package_url=$(echo "$package_url" | xargs)
+    
+    checkRepo "$base_path" "$sub_folder" "$npm_option" "$git_url" "$package_url"
+    
+done < "${REPOS_CONFIG}"
 
