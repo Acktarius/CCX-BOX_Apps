@@ -13,6 +13,17 @@ kill -INT $$
 #present Directory
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# At the start of the script, after SCRIPT_DIR definition
+readonly TEMP_LOG="/tmp/ccx_update_$$.log"
+# Clean up any existing log
+> "${TEMP_LOG}"
+
+# Add cleanup function
+cleanup() {
+    [[ -f "${TEMP_LOG}" ]] && rm -f "${TEMP_LOG}"
+}
+trap cleanup EXIT
+
 #version
 version() {
 echo "$(jq .version ${1}/${2} | xargs)"
@@ -269,6 +280,13 @@ echo -e "and there is a .git folder"
 	#check version with git diff -------------------------------------------------------- <<<<<<<< ! package.json
 	else
 	cd $anyDir
+	if git rev-parse HEAD >/dev/null 2>&1; then
+		if ! git rev-parse HEAD^ >/dev/null 2>&1; then
+			echo "${anyDir}: Repository has only initial commit" >> "${TEMP_LOG}"
+		fi
+	else
+		echo "${anyDir}: No commits found in repository" >> "${TEMP_LOG}"
+	fi
 	git diff HEAD^ HEAD --compact-summary
 	proceed $1 $2 $3 $4
 	fi
@@ -302,3 +320,9 @@ for ((i=0; i<repo_count; i++)); do
     
     checkRepo "$basePath" "$subFolder" "$npmOption" "$gitUrl" "$packageUrl"
 done
+
+# At the end of the script, after the for loop
+if [[ -s "${TEMP_LOG}" ]]; then
+    echo -e "\n${ORANGE}Repository Status Report:${TURNOFF}"
+    cat "${TEMP_LOG}"
+fi
