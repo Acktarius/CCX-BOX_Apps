@@ -66,7 +66,7 @@ case "$TERM" in
         ;;
 esac
 
-readonly REPOS_CONFIG="${SCRIPT_DIR}/repos.conf"
+readonly REPOS_CONFIG="${SCRIPT_DIR}/repos.json"
 
 validate_config() {
     if [[ ! -f "${REPOS_CONFIG}" ]]; then
@@ -211,7 +211,7 @@ cd $1
 	trip
 	;;
 	esac
-cd ${SCRIPT_DIR}
+
 }
 
 #for Anyfolder
@@ -270,7 +270,6 @@ echo -e "and there is a .git folder"
 	else
 	cd $anyDir
 	git diff HEAD^ HEAD --compact-summary
-	cd ${SCRIPT_DIR}
 	proceed $1 $2 $3 $4
 	fi
 fi
@@ -280,18 +279,26 @@ continu
 #MAIN
 validate_config
 
-while IFS='|' read -r base_path sub_folder npm_option git_url package_url || [[ -n "$base_path" ]]; do
-    # Skip empty lines and comments
-    [[ -z "$base_path" || "$base_path" =~ ^[[:space:]]*# ]] && continue
-    
-    # Trim whitespace
-    base_path=$(echo "$base_path" | xargs)
-    sub_folder=$(echo "$sub_folder" | xargs)
-    npm_option=$(echo "$npm_option" | xargs)
-    git_url=$(echo "$git_url" | xargs)
-    package_url=$(echo "$package_url" | xargs)
-    
-    checkRepo "$base_path" "$sub_folder" "$npm_option" "$git_url" "$package_url"
-    
-done < "${REPOS_CONFIG}"
+# Check if repos.json has valid content
+if ! jq empty "$REPOS_CONFIG" 2>/dev/null; then
+    echo "Error: Invalid JSON in $REPOS_CONFIG"
+    trip
+fi
 
+# Check if repositories array exists and is not empty
+repo_count=$(jq '.repositories | length' "$REPOS_CONFIG")
+if [[ $repo_count -eq 0 ]]; then
+    echo "Error: No repositories found in $REPOS_CONFIG"
+    trip
+fi
+
+# Loop through each repository
+for ((i=0; i<repo_count; i++)); do
+    basePath=$(jq -r ".repositories[$i].basePath" "$REPOS_CONFIG")
+    subFolder=$(jq -r ".repositories[$i].subFolder" "$REPOS_CONFIG")
+    npmOption=$(jq -r ".repositories[$i].npmOption" "$REPOS_CONFIG")
+    gitUrl=$(jq -r ".repositories[$i].gitUrl" "$REPOS_CONFIG")
+    packageUrl=$(jq -r ".repositories[$i].packageUrl" "$REPOS_CONFIG")
+    
+    checkRepo "$basePath" "$subFolder" "$npmOption" "$gitUrl" "$packageUrl"
+done

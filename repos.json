@@ -1,0 +1,53 @@
+{
+  "repositories": [
+    {
+      "basePath": "/opt",
+      "subFolder": "conceal-assistant",
+      "npmOption": "npm",
+      "gitUrl": "https://github.com/Acktarius/conceal-assistant.git",
+      "packageUrl": "https://raw.githubusercontent.com/Acktarius/conceal-assistant/main/package.json"
+    },
+    {
+      "basePath": "/opt",
+      "subFolder": "EZ_Privacy",
+      "npmOption": "no",
+      "gitUrl": "https://github.com/Acktarius/EZ_Privacy.git",
+      "packageUrl": "https://raw.githubusercontent.com/Acktarius/EZ_Privacy/main/package.json"
+    },
+    {
+      "basePath": "/opt",
+      "subFolder": "conceal-guardian",
+      "npmOption": "npm",
+      "gitUrl": "https://github.com/ConcealNetwork/conceal-guardian.git",
+      "packageUrl": "https://raw.githubusercontent.com/ConcealNetwork/conceal-guardian/master/package.json"
+    },
+    {
+      "basePath": "/opt/conceal-toolbox",
+      "subFolder": "ping_ccx_pool",
+      "npmOption": "no",
+      "gitUrl": "https://github.com/Acktarius/ping_ccx_pool.git",
+      "packageUrl": ""
+    },
+    {
+      "basePath": "/opt/conceal-toolbox",
+      "subFolder": "mem-alloc-fail_solver",
+      "npmOption": "no",
+      "gitUrl": "https://github.com/Acktarius/mem-alloc-fail_solver.git",
+      "packageUrl": ""
+    },
+    {
+      "basePath": "/opt/conceal-toolbox",
+      "subFolder": "CCX-BOX_Apps",
+      "npmOption": "no",
+      "gitUrl": "https://github.com/Acktarius/CCX-BOX_Apps.git",
+      "packageUrl": "https://raw.githubusercontent.com/Acktarius/CCX-BOX_Apps/main/package.json"
+    },
+    {
+      "basePath": "/opt/conceal-toolbox",
+      "subFolder": "oc-amd",
+      "npmOption": "no",
+      "gitUrl": "https://github.com/Acktarius/oc-amd.git",
+      "packageUrl": ""
+    }
+  ]
+} 
